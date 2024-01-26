@@ -6,7 +6,8 @@ class Screen:
     def __init__(self, root, video_source=0, canvas_width=600, canvas_height=400):
         self.root = root
         self.counter = 0
-        self.countdown = 5
+        self.start_countdown = 5
+        self.countdown = self.start_countdown
         self.padding = 30
         self.max_width = canvas_width - self.padding
         self.root.geometry(f'{canvas_width}x{canvas_height}')
@@ -62,7 +63,7 @@ class Screen:
             self.render_text(self.lines_dummies, 0, 75, ("Jokerman", 20, "bold"), "black", (3, "white"), 12)
             self.render_text(self.lines_questions, 0, 150, ("Ink Free", 14, "bold"), "black")
             
-            self.render_options(300, {'Chuva'.upper(): True, 'Mamão papaia'.upper(): False, 'Bicicleta'.upper(): True, })
+            self.render_options(300, {'Chuva'.upper(): True, 'Mamão papaia'.upper(): False, 'Bicicleta'.upper(): False, })
 
             self.render_countdown()
 
@@ -73,9 +74,12 @@ class Screen:
         else:
             self.cap.release()
 
-    def update_second_counter(self):
-        # Atualiza o contador de 1 em 1 segundo
+    def update_second_counter(self):        
         self.counter += 1
+        self.countdown -= 1
+
+        if self.counter > 10:
+            self.counter = 0
 
         # Chama o método novamente após 1 segundo (1000 milissegundos)
         self.root.after(1000, self.update_second_counter)
@@ -92,7 +96,7 @@ class Screen:
         self.canvas.create_arc(text_x - r, text_y + r, text_x + r, text_y - r, start=0, extent=0, fill="#FFF100", outline="" )
         self.canvas.create_text(text_x, text_y, text=self.countdown, font=("Arial", 40, "bold"), fill="black", anchor=tk.CENTER)
 
-        self.countdown = self.counter
+        #self.countdown = self.counter
 
     def load_image(self, image_path, rotation_angle=0):
         original_image = Image.open(image_path)        
@@ -103,7 +107,8 @@ class Screen:
         height = 50
         gap = height + 10
         for chave, valor in responses.items():
-            self.round_rectangle(self.padding, y, self.max_width, y + height, radius=5, fill="#FFF1D5")
+            fill = valor == False and "#FFF1D5" or "#FFEB0F"
+            self.round_rectangle(self.padding, y, self.max_width, y + height, radius=5, fill=fill)
             self.render_text([chave], 0, y + (height / 2), ("Ink Free", 14, "bold"), "black")
             y += gap
 
