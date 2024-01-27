@@ -5,28 +5,20 @@ from util.scene_manager import SceneManager
 from util.screen import Screen
 from util.countdown import Countdown
 
-from scenes.scene_master_page_multiple_choices import SceneMasterPageMultipleChoices
-from scenes.scene_reading_multiple_choices import SceneReadingMultipleChoices
+from scenes.scene_game_multiple_choices import SceneGameMultipleChoices
+from scenes.scene_transition import SceneTransition
 
 class ScreenMultipleChoices(Screen):    
     def __init__(self):        
         super().__init__("Quiz for Dummies!")       
                
-         #scenes = SceneManager()
+        self.scene_manager = SceneManager()
 
-        #scenes.add("INIT")
-        #scenes.add("READING")
-        #scenes.add("COUNTDOWN")
-        #scenes.add("RESPONDING")
-        #scenes.add("TRANSITION")
-        #scenes.add("END")
-       
-        self.scene_master_page = SceneMasterPageMultipleChoices(self)
+        self.scene_manager.add("game", SceneGameMultipleChoices(self))
+        self.scene_manager.add("transition", SceneTransition(self))
 
+        self.scene_manager.set_active("game")
 
-
-        
-        
         self.update_render()
         self.update_seconds()
 
@@ -40,24 +32,11 @@ class ScreenMultipleChoices(Screen):
             self.root.after(1000, self.update_seconds) 
 
 
-    def update_render(self):      
-        self.scene_master_page.update_render()                       
-        #self.root.after(30, self.update_render)  
-        
-
-
-   
-  
-
-
-
-
-
-
-
-
-
-   
+    def update_render(self):
+        scene = self.scene_manager.get_active()
+        scene.update_render()
+                              
+        #self.root.after(30, self.update_render)     
 
 if __name__ == "__main__":    
     player = ScreenMultipleChoices()

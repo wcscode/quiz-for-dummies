@@ -1,13 +1,12 @@
 import tkinter as tk
 from util import utilities as utils
 from scenes.scene import Scene
+from util.state_manager import StateManager
 
-class SceneMasterPageMultipleChoices(Scene):
+class SceneGameMultipleChoices(Scene):
 
     def __init__(self, screen_instance):
-        self.screen_instance = screen_instance
-
-        super().__init__(self.screen_instance, "ALL")   
+        super().__init__(screen_instance, "ALL")   
 
         self.video_capture = utils.video_capture('./assets/videos/bg-green-animated-solar.mp4')         
 
@@ -25,6 +24,14 @@ class SceneMasterPageMultipleChoices(Scene):
         self.questions = utils.break_text(self.screen_instance.root, "O que é o que é, cai em pé e corre deitado?".upper(), self.screen_instance.MAX_WIDTH)        
         self.responses = {'Chuva'.upper(): True, 'Mamão papaia'.upper(): False, 'Bicicleta'.upper(): False }
 
+        self.state_manager = StateManager()
+
+        self.state_manager.add("load_questions")
+        self.state_manager.add("reading")
+        self.state_manager.add("countdown")
+        self.state_manager.add("responding")
+
+        
         #self.countdown = Countdown(self.canvas, 5)
 
     def update_seconds(self):
@@ -38,7 +45,7 @@ class SceneMasterPageMultipleChoices(Scene):
 
         ret, frame = self.video_capture.read()
         if ret:  
-            self.canvas.delete("all")
+            self.screen_instance.canvas.delete("all")
 
             #self.scene_master_page.update_render()
             self.render_header_text(0, 30, "quiz", 16)
@@ -58,7 +65,7 @@ class SceneMasterPageMultipleChoices(Scene):
 
             #self.countdown.render()            
            
-            self.root.after(30, self.update_render)  
+            self.screen_instance.root.after(30, self.update_render)  
         else:
             self.video_capture.release()
             self.is_running = False
